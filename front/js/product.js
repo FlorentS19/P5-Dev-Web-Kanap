@@ -11,9 +11,6 @@ fetch("http://localhost:3000/api/products")
     console.log(id);
 
 //On récupére les infos du produit
-//let info = fetch("http://localhost:3000/api/products/" + id);
-//console.log(info);
-
 async function getProduct() {
   return await fetch("http://localhost:3000/api/products/"+ id)
       .then(function (res) {
@@ -25,12 +22,19 @@ async function getProduct() {
 }
 
 const product = getProduct();
+//console.log(product)
+product.then(function(result) {
+  console.log(result)
+})
+//console.log(product.imageUrl)
 
-console.log(product)
-console.log(product[0].imageUrl)
-
-let img = document.getElementById("item__content_img");
+let img = document.getElementById("item__img_result");
   img.src = product.imageUrl;
+  img.alt = product.altTxt;
+let title = document.getElementById("title");
+  textcontent = product.name;
+let description = document.getElementById("description");
+  textcontent = product.description;
 
     //${products.altTxt}
     //${products.name}
