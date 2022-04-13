@@ -1,42 +1,57 @@
-//On récupére l'ID dans le lien du produit
-fetch("http://localhost:3000/api/products") 
+//On récupére l'ID du produit dans le lien
+let url = new URL(window.location.href);
+let productId = url.searchParams.get("id");
+console.log(productId);
 
-  .then(data =>data.json())
-    const queryString_url_id = window.location.search;
+//Requête vers l'API pour récupérer les données du produit.
 
-    const urlSearchParams = new URLSearchParams(queryString_url_id);
-    console.log(urlSearchParams);
+const products = "http://localhost:3000/api/products/";
 
-    const id = urlSearchParams.get("id");
-    console.log(id);
-
-//On récupére les infos du produit
-async function getProduct() {
-  return await fetch("http://localhost:3000/api/products/"+ id)
-      .then(function (res) {
-          return res.json();
-      })
-      .catch(function (err) {
-          console.log(err);
-      });
+async function getArticle(id) {
+  const catchArticles = await fetch(products + id)
+    .then((catchArticles) => catchArticles.json())
+    .then(function (data) {
+      article = data;
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+  return article;
 }
 
-const product = getProduct();
-//console.log(product)
-product.then(function(result) {
-  console.log(result)
-})
-//console.log(product.imageUrl)
+//Intégration des données reçu sur la fiche produit
 
-let img = document.getElementById("item__img_result");
-  img.src = product.imageUrl;
-  img.alt = product.altTxt;
-let title = document.getElementById("title");
-  textcontent = product.name;
-let description = document.getElementById("description");
-  textcontent = product.description;
+async function displayArticle(productId) {
+  const article = await getArticle(productId);
 
-    //${products.altTxt}
-    //${products.name}
-    //${products.price}
-    //${products.description};
+  const productImg = document.getElementById("item__img_result");
+  document.querySelector(".item__img").appendChild(productImg);
+  productImg.src = article.imageUrl;
+  console.log(article.imageUrl)
+  productImg.alt = article.altTxt;
+  console.log(article.altTxt)
+
+  const productTitle = document.getElementById("title");
+  productTitle.innerHTML = article.name;
+  console.log(article.name)
+
+  const productPrice = document.getElementById("price");
+  productPrice.innerHTML = article.price;
+  console.log(article.price)
+
+  const productDescription = document.getElementById("description");
+  productDescription.innerHTML = article.description;
+  console.log(article.description)
+
+  //Boucle pour les couleurs disponibles du produit
+
+  for (color of article.colors) {
+    const productColors = document.createElement("option");
+    document.querySelector("#colors").appendChild(productColors);
+    productColors.value = color;
+    productColors.innerHTML = color;
+  }
+
+  addToCart();
+}
+displayArticle(productId);
