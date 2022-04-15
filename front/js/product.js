@@ -1,4 +1,5 @@
 //On récupére l'ID du produit dans le lien
+
 let url = new URL(window.location.href);
 let productId = url.searchParams.get("id");
 console.log(productId);
@@ -51,7 +52,55 @@ async function displayArticle(productId) {
     productColors.value = color;
     productColors.innerHTML = color;
   }
-
+  console.log(article.colors)
   addToCart();
 }
 displayArticle(productId);
+
+function addToCart() {
+  //Définition des champs à renseigner
+
+  const addBtn = document.getElementById("addToCart");
+  const quantity = document.getElementById("quantity");
+  const color = document.getElementById("colors");
+
+  // Au clic, l'évènement s'effectue si les champs sont renseignés
+
+  addBtn.addEventListener("click", () => {
+    if (color.value == "" || quantity.value == 0 || quantity.value > 100) {
+      
+      //Alerte l'utilisateur si les conditions ne sont pas remplisse
+      
+      alert ('Veuillez renseigner une quantité comprise entre 1 et 100 et une couleur')
+      return;
+    }
+      //Si les champs sont renseignés : stockage des données dans des variables
+    else {
+      let userProductId = productId;
+      let userProductColor = color.value;
+      let userProductQty = quantity.value;
+
+      // Création d'un objet produit
+
+      let userProductArray = {
+        userProductId: userProductId,
+        userProductColor: userProductColor,
+        userProductQty: userProductQty,
+      };
+      console.log(userProductArray)
+    
+      // Mise à disposition du localStorage si existant
+
+      let productLocalStorage = JSON.parse(localStorage.getItem("userProducts"));
+        console.log(productLocalStorage)
+        // On l'enregistre dans le localStorage
+
+        if (productLocalStorage === null) {
+          productLocalStorage = [];
+          productLocalStorage.push(userProductArray);
+          localStorage.setItem("userProducts",JSON.stringify(productLocalStorage));
+          alert("C'est cool, le produit est enregistré")
+        ;}
+    }
+  });
+}
