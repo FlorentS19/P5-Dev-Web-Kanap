@@ -52,7 +52,8 @@ async function displayArticle(productId) {
     productColors.value = color;
     productColors.innerHTML = color;
   }
-  console.log(article.colors)
+  console.log(article.colors);
+
   addToCart();
 }
 displayArticle(productId);
@@ -79,26 +80,32 @@ function addToCart() {
       let userProductId = productId;
       let userProductColor = color.value;
       let userProductQty = quantity.value;
+      let userProductPrice = article.price;
+      let userProductImgSrc = article.imageUrl;
+      let userProductImgAlt = article.altTxt;
 
       // Création d'un objet produit
 
       let userProductArray = {
-        userProductId: userProductId,
-        userProductColor: userProductColor,
-        userProductQty: userProductQty,
+        Id: userProductId,
+        Color: userProductColor,
+        Qty: userProductQty,
+        Price: userProductPrice,
+        ImgSrc: userProductImgSrc,
+        ImgAlt: userProductImgAlt,
       };
       console.log(userProductArray)
     
       // Mise à disposition du localStorage si existant
 
-      let productLocalStorage = JSON.parse(localStorage.getItem("userProducts"));
+      let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
         console.log(productLocalStorage)
         // On l'enregistre dans le localStorage
 
         if (productLocalStorage === null) {
           productLocalStorage = [];
           productLocalStorage.push(userProductArray);
-          localStorage.setItem("userProducts",JSON.stringify(productLocalStorage));
+          localStorage.setItem("Product",JSON.stringify(productLocalStorage));
           alert("C'est cool, le produit est enregistré")
         ;}
     }
