@@ -83,10 +83,12 @@ function addToCart() {
       let userProductPrice = article.price;
       let userProductImgSrc = article.imageUrl;
       let userProductImgAlt = article.altTxt;
+      let userArticleId = userProductId + userProductColor;
 
       // Création d'un objet produit
 
       let userProductArray = {
+        ArticleId: userArticleId,
         Id: userProductId,
         Color: userProductColor,
         Qty: userProductQty,
@@ -102,12 +104,12 @@ function addToCart() {
         console.log(productLocalStorage)
         // On l'enregistre dans le localStorage
 
-        if (productLocalStorage === null) {
-          productLocalStorage = [];
-          productLocalStorage.push(userProductArray);
-          localStorage.setItem("Product",JSON.stringify(productLocalStorage));
-          alert("C'est cool, le produit est enregistré")
-        ;}
+        if (productLocalStorage === null)
+          
+        productLocalStorage = [];
+        productLocalStorage.push(userProductArray);
+        localStorage.setItem("Product",JSON.stringify(productLocalStorage));
+        alert("C'est cool, le produit est enregistré");
     }
   });
 }

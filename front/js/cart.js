@@ -1,6 +1,6 @@
 //Récuperation du produit dans le panier
 
-let addProduct = JSON.parse(localStorage.getItem("userProducts"));
+let addProduct = JSON.parse(localStorage.getItem("Product"));
 
 const panierDisplay = async () => {
     if(addProduct) {
