@@ -103,56 +103,26 @@ function addToCart() {
       if (productLocalStorage == null) {
         productLocalStorage = [];
         productLocalStorage.push(userProductArray);
-        localStorage.setItem("Product",JSON.stringify(productLocalStorage));
-        //alert("C'est cool, le produit est enregistré");
+        alert("C'est cool, le produit est enregistré");
       }
 
       // Comportement si il y a un produit dans localStorage
-      else if (productLocalStorage != null) {
-        productLocalStorage.push(userProductArray);
-        localStorage.setItem("Product", JSON.stringify(productLocalStorage));
-      } console.log(productLocalStorage)
-      
-      /*let mappingProducts = productLocalStorage.find(
-        (el) => el.Id === userProductId && el.Color === userProductColor);
-
-      // Si la condition est vraie on additionne la quantité de l'objet du localStorage qui répond à la condition avec celle de la page en cours et on renvoie le tout au localStorage
-      if (mappingProducts) {
+      else {
         
-        // On incrémente la quantité
-        newQty = parseInt(mappingProducts.Qty) + parseInt(userProductQty);
-        mappingProducts.Qty = newQty;
-
-        // On l'enregistre dans le localStorage
-        localStorage.setItem("Product", JSON.stringify(productLocalStorage));
-        alert("C'est cool, le produit est enregistré");
-      } else {
-        
-        // Dans tous les autres cas, on enregistre un nouvel objet dans le localStorage
-        productLocalStorage.push(userProductArray);
-        localStorage.setItem("Product", JSON.stringify(productLocalStorage));
-        //alert("C'est cool, le produit est enregistré");
-      }
-      
-      //Incrémentation des quantités, des produits identiques
-      for (let i = 0; i < productLocalStorage.length; i++){
-        if ((userProductArray.Color === productLocalStorage[i].Color) && (userProductArray.Id === productLocalStorage[i].Id)){
-          
-          productLocalStorage[i].Qty += parseInt(userProductArray.Qty);
-          console.log(userProductArray.Qty)
-
-          localStorage.setItem('Product',JSON.stringify(productLocalStorage))
+        //On pose la question au LocalStorage
+        for (i = productLocalStorage.length - 1; i >= 0; i--) {
+          if (productLocalStorage[i].ArticleId == userProductArray.ArticleId) {
+            productLocalStorage[i].Qty = parseInt(productLocalStorage[i].Qty) + parseInt(userProductArray.Qty);
+            ProductAdded = true;
+            break;
+          } 
+          else {
+            ProductAdded = false;
+          }
         }
-      } console.log(productLocalStorage.length)
-
-      let check = productLocalStorage.some( e => e.Id === userProductArray.Id && e.Color === userProductArray.Color)
-      console.log(check)
-      console.log(productLocalStorage)
-    
-      if(!check){
-        productLocalStorage.push(userProductArray)
-        localStorage.setItem('Product', JSON.stringify(productLocalStorage))
-      }*/
-    }
+        if (!ProductAdded) productLocalStorage.push(userProductArray);
+      }
+      localStorage.setItem("Product",JSON.stringify(productLocalStorage));
+      }
   });
 }

@@ -41,9 +41,10 @@ let totalCalculPrice = [];
 
 //Récupération des prix dans le panier
 for (let i = 0; i < productLocalStorage.length; i++){
-  let priceProductCart = productLocalStorage[i].Price;
+  let priceProductCart = productLocalStorage[i].Price * productLocalStorage[i].Qty;
   totalCalculPrice.push(priceProductCart)
 }
+
 
 //Aditionner les prix dans la variable
 const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
@@ -67,21 +68,25 @@ const reducerQty = (accumulator, currentValue) => accumulator + currentValue;
 const totalQuantity = eval(totalCalculQty.join("+"));
 document.getElementById("totalQuantity").innerHTML = totalQuantity;
 
+console.log(reducerQty)
+console.log(totalQuantity)
+console.log(totalCalculQty)
 
-/* Suppression d'items
+//Suppression d'items
 
 let deleteProduct = document.querySelectorAll(".deleteItem");
 console.log(deleteProduct)
 
-for (let i = 0; i < deleteProduct[i].length; i++){
-  deleteProduct[i].addEventListener("click", (event) =>{
+for (let i = 0; i < deleteProduct.length; i++){
+  deleteProduct[i].addEventListener("click" , (event) =>{
     event.preventDefault();
 
     let deleteIdSelect = productLocalStorage[i].Id;
-    console.log(deleteIdSelect)
-
-
-    //productLocalStorage = productLocalStorage.filter( el => el.)
+    productLocalStorage = productLocalStorage.filter( el => el.Id !== deleteIdSelect);
     
-  }
-}*/
+    localStorage.setItem("Product",JSON.stringify(productLocalStorage));
+
+    alert("Le produit a bien etait supprimé du panier");
+    window.location.href = "cart.html";
+  })
+}
