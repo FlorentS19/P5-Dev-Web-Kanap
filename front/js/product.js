@@ -90,8 +90,8 @@ function addToCart() {
         Color: userProductColor,
         Qty: userProductQty,
         Price: userProductPrice,
-        ImgSrc: userProductImgSrc,
-        ImgAlt: userProductImgAlt,
+        imageUrl: userProductImgSrc,
+        altTxt: userProductImgAlt,
       };
       console.log(userProductArray)
 
