@@ -32,6 +32,7 @@ for (i = 0; i < productLocalStorage.length; i++) {
         productSection.appendChild(htmlString.body.firstChild);
 }
 
+
 //------------------------------Calcul du prix total------------------------------//
 
 //Déclaration de variable pour mettre les prix des produits
@@ -70,6 +71,15 @@ console.log(reducerQty)
 console.log(totalQuantity)
 console.log(totalCalculQty)
 
+
+//--------------------Modification de la quantité des produits avec addEventListener change--------------------//
+
+
+/////////////////////////////////////////////////////////////////////////////////EN COURS/////////////////////////////////////////////////////////////////////////////////
+
+
+//------------------------------Touche supprimer------------------------------//
+
 //Suppression d'items
 
 let deleteProduct = document.querySelectorAll(".deleteItem");
@@ -89,149 +99,119 @@ for (let i = 0; i < deleteProduct.length; i++){
   })
 }
 
-//Modification de la quantité des produits avec addEventListener change
 
+//------------------------------Vérification des champs formulaire------------------------------//
 
-function getUserForm() {
-  let inputs = document.querySelectorAll("input");
+const btnCommand = document.querySelector("#order");
 
-  // Gestion des erreurs
+btnCommand.addEventListener("click", (e) => {
+  e.preventDefault();
 
-  const errorDisplay = (tag, message, valid) => {
-    const displayErrorMessage = document.querySelector("#" + tag + "ErrorMsg");
-    if (!valid) {
-      displayErrorMessage.textContent = message;
-    } else {
-      displayErrorMessage.textContent = "";
+  //Mettre les données du formulaire dans un objet
+  const contact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value
+  }
+  console.log(contact)
+
+  //Alertes des erreurs pour les problémes de saisie rencontré
+  const textAlertName = (value) => {
+    return `${value}: Le prénom et/ou le nom, ne doit contenir entre 2 et 20 caractères et ne doit pas contenir de caractères spéciaux`;
+  }
+  const textAlertAddress = (value) => {
+    return `${value}: L'adresse doit comprendre un numéro, la voie ainsi que le nom de la voie`;
+  }
+  const textAlertCity = (value) => {
+    return `${value}: Le nom de la ville doit contenir entre 3 et 20 caractères et ne pas contenir de caractères spéciaux`;
+  }
+  const textAlertEmail = (value) => {
+    return `${value}: Le mail n'est pas valide`;
+  }
+
+  //Gestion de la validation des valeurs du nom, prénom et la ville
+  const regExNameAndCity = (value) => {
+    return /^[a-zA-Z]{3,20}$/.test(value);
+  }
+
+  //Validité du prénom
+  function firstNameControl(){
+    const checkFirstName = contact.firstName;
+    if (regExNameAndCity(checkFirstName)) {
+      return true;
+    } else  {
+      alert(textAlertName("Prénom"));
+      return false;
     }
-  };
+  }
 
-  // Validation des champs via comparaison Regex
-
-  const firstNameChecker = (value) => {
-    if (value.length > 0 && (value.length < 2 || value.length > 20)) {
-      errorDisplay(
-        "firstName",
-        "Le prénom doit contenir entre 2 et 20 caractères"
-      );
-      firstName = null;
-    } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
-      errorDisplay(
-        "firstName",
-        "Le prénom ne doit pas contenir de caractères spéciaux"
-      );
-      firstName = null;
-    } else {
-      errorDisplay("firstName", "", true);
-      firstName = value;
+  //Validité du nom
+  function lastNameControl(){
+    const checklastName = contact.lastName;
+    if (regExNameAndCity(checklastName)) {
+      return true;
+    } else  {
+      alert(textAlertName("Nom"));
+      return false;
     }
-  };
+  }
 
-  const lastNameChecker = (value) => {
-    if (value.length > 0 && (value.length < 2 || value.length > 20)) {
-      errorDisplay(
-        "lastName",
-        "Le nom de famille doit contenir entre 2 et 20 caractères"
-      );
-      lastName = null;
-    } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
-      errorDisplay(
-        "lastName",
-        "Le nom de famille ne doit pas contenir de caractères spéciaux"
-      );
-      lastName = null;
-    } else {
-      errorDisplay("lastName", "", true);
-      lastName = value;
+  //Validité de l'adresse
+  function addressControl(){
+    const checkaddress = contact.address;
+    if (/^[a-zA-Z0-9\s]{5,50}$/.test(checkaddress)) {
+      return true;
+    } else  {
+      alert(textAlertAddress("Adresse"));
+      return false;
     }
-  };
+  }
 
-  const addressChecker = (value) => {
-    if (value.length > 0 && (value.length < 2 || value.length > 50)) {
-      errorDisplay(
-        "address",
-        "L'adresse doit contenir entre 2 et 20 caractères"
-      );
-      address = null;
-    } else if (
-      !value.match(
-        /^([1-9][0-9]*(?:-[1-9][0-9]*)*)[\s,-]+(?:(bis|ter|qua)[\s,-]+)?([\w]+[\-\w]*)[\s,]+([-\w].+)$/
-      )
-    ) {
-      errorDisplay(
-        "address",
-        "L'adresse doit comprendre un numéro, la voie, le nom de la voie ainsi que le code postal et la ville"
-      );
-      address = null;
-    } else {
-      errorDisplay("address", "", true);
-      address = value;
+  //Validité de la ville
+  function cityControl(){
+    const checkcity = contact.city;
+    if (regExNameAndCity(checkcity)) {
+      return true;
+    } else  {
+      alert(textAlertCity("Ville"));
+      return false;
     }
-  };
+  }
 
-  const cityChecker = (value) => {
-    if (value.length > 0 && (value.length < 2 || value.length > 20)) {
-      errorDisplay(
-        "city",
-        "Le nom de la ville doit contenir entre 2 et 20 caractères"
-      );
-      city = null;
-    } else if (!value.match(/^[a-zA-z0-9_.-]*$/)) {
-      errorDisplay(
-        "city",
-        "Le nom de la ville ne doit pas contenir de caractères spéciaux"
-      );
-      city = null;
-    } else {
-      errorDisplay("city", "", true);
-      city = value;
+  //Validité de l'adrese mail
+  function emailControl(){
+    const checkemail = contact.email;
+    if (/^[\w_-]+@[\w-]+\.[a-z]{2,3}$/.test(checkemail)) {
+      return true;
+    } else  {
+      alert(textAlertEmail("Email"));
+      return false;
     }
-  };
+  } 
+  
+  //Mettre l'objet "contact" dans localStorage
+  if (firstNameControl() && lastNameControl() && addressControl() && cityControl() && emailControl()) {
+  localStorage.setItem("Contact", JSON.stringify(contact));
+  } else {
+    alert("Veuillez remplir le formualire de contact")
+  }
 
-  const emailChecker = (value) => {
-    if (!value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
-      errorDisplay("email", "Le mail n'est pas valide");
-      email = null;
-    } else {
-      errorDisplay("email", "", true);
-      email = value;
-    }
-  };
+  //Assembler les objets Produits et Contact en un seul objet pour l'envoyer au serveur
+  const sendObject = {
+    productLocalStorage,
+    contact
+  }
+})
 
-  // Ecoute des champs du formulaire
+/*------------------------------------------------------------------------------*/
 
-  inputs.forEach((input) => {
-    input.addEventListener("input", (e) => {
-      switch (e.target.id) {
-        case "firstName":
-          firstNameChecker(e.target.value);
 
-          break;
-        case "lastName":
-          lastNameChecker(e.target.value);
-
-          break;
-        case "address":
-          addressChecker(e.target.value);
-
-          break;
-        case "city":
-          cityChecker(e.target.value);
-
-          break;
-        case "email":
-          emailChecker(e.target.value);
-        default:
-          null;
-      }
-    });
-  });
-}
-getUserForm();
 
 // Envoi d'une requête POST à l'API
 
-function postForm() {
+/*function postForm() {
   const orderBtn = document.getElementById("order");
 
   //Ecouter le bouton submit
@@ -242,7 +222,7 @@ function postForm() {
     if (productLocalStorage !== null) {
       let orderProducts = [];
       for (let i = 0; i < productLocalStorage.length; i++) {
-        orderProducts.push(productLocalStorage[i].userProductId);
+        orderProducts.push(productLocalStorage[i].Id);
       }
 
       // Construction de l'objet attendu par l'API
@@ -273,7 +253,7 @@ function postForm() {
           .then((res) => res.json())
           .then((data) => {
             // Renvoi de l'orderID dans l'URL
-            document.location.href = "confirmation.html?id=" + data.orderId;
+            //document.location.href = "confirmation.html?id=" + data.orderId;
           })
           .catch(function (err) {
             console.log("Erreur fetch" + err);
@@ -286,4 +266,4 @@ function postForm() {
     }
   });
 }
-postForm();
+postForm();*/
