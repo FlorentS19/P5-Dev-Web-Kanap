@@ -199,13 +199,34 @@ btnCommand.addEventListener("click", (e) => {
   }
 
   //Assembler les objets Produits et Contact en un seul objet pour l'envoyer au serveur
-  const sendObject = {
+  const sendObjects = {
     productLocalStorage,
     contact
   }
+
+  
+  //------------------------------Envoi sur serveur------------------------------//
+  
+  const options = {
+    method: "POST",
+    body: JSON.stringify(sendObjects),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+  fetch("http://localhost:3000/api/products/order", options)
+    .then((res) => res.json())
+    .then((data) => {
+      // Renvoi de l'orderID dans l'URL
+      //document.location.href = "confirmation.html?id=" + data.orderId;
+    })
+    .catch(function (err) {
+      console.log("Erreur fetch" + err);
+    });
 })
 
-/*------------------------------------------------------------------------------*/
+
 
 
 
