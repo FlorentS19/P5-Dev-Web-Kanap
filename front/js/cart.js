@@ -1,5 +1,6 @@
 //Récuperation du produit dans le panier
 let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
+console.log(productLocalStorage);
 
 
 //Intégration HTML + des données produit sur la page
@@ -7,7 +8,7 @@ const parser = new DOMParser();
 let productSection = document.getElementById("cart__items");
 for (i = 0; i < productLocalStorage.length; i++) {
     let productItem = `
-    <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
+    <article class="cart__item" data-id="${productLocalStorage[i].Id}" data-color="${productLocalStorage[i].Color}">
         <div class="cart__item__img">
             <img src="${productLocalStorage[i].imageUrl}" loading="lazy" alt="${productLocalStorage[i].altTxt}">
         </div>
@@ -32,6 +33,34 @@ for (i = 0; i < productLocalStorage.length; i++) {
         productSection.appendChild(htmlString.body.firstChild);
 }
 
+
+//------------------------------Modification quantité input------------------------------//
+
+let inputQty = document.querySelectorAll(".itemQuantity");
+inputQty.forEach((tag)=> {
+  
+  let article = tag.closest("article");
+  let id = article.dataset.Id;
+  let color = article.dataset.Color;
+  let newQuantity = "";
+  tag.addEventListener("change", (event) =>{
+    event.preventDefault();
+    // nouvelle quantité que l'on souhaite mettre à jour dans le localStorage //
+    newQuantity = Number(tag.value);
+    console.log(newQuantity);
+    productLocalStorage.forEach((product) =>{
+      if (product.id === id && product.color === color){
+        product.Qty = newQuantity;
+        if(confirm("Souhaitez-vous modifier la quantité de cet article?")){
+          // mettre à jour la quantité dans le localStorage = OK //
+          localStorage.setItem("Product",JSON.stringify(productLocalStorage));
+          // recharger la page pour mettre à jour le total prix et quantité du panier //
+          document.location.reload();
+        }
+      }
+    })
+  })  
+})
 
 //------------------------------Calcul du prix total------------------------------//
 
@@ -70,12 +99,6 @@ document.getElementById("totalQuantity").innerHTML = totalQuantity;
 console.log(reducerQty)
 console.log(totalQuantity)
 console.log(totalCalculQty)
-
-
-//--------------------Modification de la quantité des produits avec addEventListener change--------------------//
-
-
-/////////////////////////////////////////////////////////////////////////////////EN COURS/////////////////////////////////////////////////////////////////////////////////
 
 
 //------------------------------Touche supprimer------------------------------//
@@ -215,6 +238,7 @@ btnCommand.addEventListener("click", (e) => {
       "Content-Type": "application/json",
     },
   };
+  console.log(options)
   fetch("http://localhost:3000/api/products/order", options)
     .then((res) => res.json())
     .then((data) => {
