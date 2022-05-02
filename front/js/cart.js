@@ -1,6 +1,6 @@
-//Récuperation du produit dans le panier
+//Récuperation des produits dans le panier
 let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
-console.log(productLocalStorage);
+
 
 
 //Intégration HTML + des données produit sur la page
@@ -16,7 +16,7 @@ for (i = 0; i < productLocalStorage.length; i++) {
             <div class="cart__item__content__description">
             <h2>${productLocalStorage[i].Name}</h2>
             <p>${productLocalStorage[i].Color}</p>
-            <p>${productLocalStorage[i].Qty * productLocalStorage[i].Price} €</p>
+            <p>${productLocalStorage[i].Price} €</p>
             </div>
             <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
@@ -32,74 +32,77 @@ for (i = 0; i < productLocalStorage.length; i++) {
     const htmlString = parser.parseFromString(productItem,"text/html");
         productSection.appendChild(htmlString.body.firstChild);
 }
-
+totalOrder();
 
 //------------------------------Modification quantité input------------------------------//
 
-let inputQty = document.querySelectorAll(".itemQuantity");
-inputQty.forEach((tag)=> {
-  
-  let article = tag.closest("article");
-  let id = article.dataset.Id;
-  let color = article.dataset.Color;
-  let newQuantity = "";
-  tag.addEventListener("change", (event) =>{
+/*let priceQty = productLocalStorage[i].Price;
+
+for (let i = 0; i < inputQty.length; i++) {
+  inputQty[i].addEventListener("change", function (event) {
     event.preventDefault();
-    // nouvelle quantité que l'on souhaite mettre à jour dans le localStorage //
-    newQuantity = Number(tag.value);
-    console.log(newQuantity);
-    productLocalStorage.forEach((product) =>{
-      if (product.id === id && product.color === color){
-        product.Qty = newQuantity;
-        if(confirm("Souhaitez-vous modifier la quantité de cet article?")){
-          // mettre à jour la quantité dans le localStorage = OK //
-          localStorage.setItem("Product",JSON.stringify(productLocalStorage));
-          // recharger la page pour mettre à jour le total prix et quantité du panier //
-          document.location.reload();
-        }
-      }
-    })
-  })  
-})
+    
+    productLocalStorage[i].Price = productLocalStorage[i].Qty * productLocalStorage[i].Price;
+
+  })
+}*/
+
+let inputQty = document.querySelectorAll(".itemQuantity");
+
+for (let i = 0; i < inputQty.length; i++) {
+  inputQty[i].addEventListener("change", function (event) {
+    event.preventDefault();
+
+    productLocalStorage[i].Qty = event.target.value;
+
+    if (
+      productLocalStorage[i].Qty == 0 ||
+      productLocalStorage[i].Qty > 100
+    ) {
+      alert('Veuillez sélectionner une quantité comprise entre 1 et 100');
+      window.location.reload();
+    } else {
+      localStorage.setItem("Product", JSON.stringify(productLocalStorage));
+      totalOrder()
+    }
+  });
+}
+
+function totalOrder() {
+//------------------------------Calcul de la quantité total------------------------------//
+
+  //Déclaration de variable pour mettre la quantité des produits
+  let totalCalculQty = [];
+
+  //Récupération des quantités dans le panier
+  for (let i = 0; i < productLocalStorage.length; i++){
+    let quantityProductCart = productLocalStorage[i].Qty;
+    totalCalculQty.push(quantityProductCart)
+  }
+
+  //Aditionner les quantités dans la variable
+  const reducerQty = (accumulator, currentValue) => accumulator + currentValue;
+  const totalQuantity = eval(totalCalculQty.join("+"));
+  document.getElementById("totalQuantity").innerHTML = totalQuantity;
+  console.log(reducerQty)
 
 //------------------------------Calcul du prix total------------------------------//
 
-//Déclaration de variable pour mettre les prix des produits
-let totalCalculPrice = [];
+  //Déclaration de variable pour mettre les prix des produits
+  let totalCalculPrice = [];
 
-//Récupération des prix dans le panier
-for (let i = 0; i < productLocalStorage.length; i++){
-  let priceProductCart = productLocalStorage[i].Price * productLocalStorage[i].Qty;
-  totalCalculPrice.push(priceProductCart)
+  //Récupération des prix dans le panier
+  for (let i = 0; i < productLocalStorage.length; i++){
+    let priceProductCart = productLocalStorage[i].Price * productLocalStorage[i].Qty;
+    totalCalculPrice.push(priceProductCart)
+  }
+
+
+  //Aditionner les prix dans la variable
+  const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
+  const totalPrice = totalCalculPrice.reduce(reducerPrice,0);
+  document.querySelector('#totalPrice').innerHTML = totalPrice;
 }
-
-
-//Aditionner les prix dans la variable
-const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
-const totalPrice = totalCalculPrice.reduce(reducerPrice,0);
-document.querySelector('#totalPrice').innerHTML = totalPrice;
-
-
-//------------------------------Calcul de la quantité total------------------------------//
-
-//Déclaration de variable pour mettre la quantité des produits
-let totalCalculQty = [];
-
-//Récupération des quantités dans le panier
-for (let i = 0; i < productLocalStorage.length; i++){
-  let quantityProductCart = productLocalStorage[i].Qty;
-  totalCalculQty.push(quantityProductCart)
-}
-
-//Aditionner les quantités dans la variable
-const reducerQty = (accumulator, currentValue) => accumulator + currentValue;
-const totalQuantity = eval(totalCalculQty.join("+"));
-document.getElementById("totalQuantity").innerHTML = totalQuantity;
-
-console.log(reducerQty)
-console.log(totalQuantity)
-console.log(totalCalculQty)
-
 
 //------------------------------Touche supprimer------------------------------//
 
@@ -123,12 +126,20 @@ for (let i = 0; i < deleteProduct.length; i++){
 }
 
 
+
+
 //------------------------------Vérification des champs formulaire------------------------------//
 
 const btnCommand = document.querySelector("#order");
 
 btnCommand.addEventListener("click", (e) => {
   e.preventDefault();
+
+  //Recuperation des ID a envoyer depuis localStorage
+  let products = [];
+  for(i = 0; i < productLocalStorage.length; i++){
+    products.push(productLocalStorage[i].Id)
+  }
 
   //Mettre les données du formulaire dans un objet
   const contact = {
@@ -139,6 +150,7 @@ btnCommand.addEventListener("click", (e) => {
     email: document.querySelector("#email").value
   }
   console.log(contact)
+  console.log(products)
 
   //Alertes des erreurs pour les problémes de saisie rencontré
   const textAlertName = (value) => {
@@ -223,7 +235,7 @@ btnCommand.addEventListener("click", (e) => {
 
   //Assembler les objets Produits et Contact en un seul objet pour l'envoyer au serveur
   const sendObjects = {
-    productLocalStorage,
+    products,
     contact
   }
 
@@ -240,75 +252,13 @@ btnCommand.addEventListener("click", (e) => {
   };
   console.log(options)
   fetch("http://localhost:3000/api/products/order", options)
-    .then((res) => res.json())
+    .then((res) => { return res.json();})
     .then((data) => {
-      // Renvoi de l'orderID dans l'URL
-      //document.location.href = "confirmation.html?id=" + data.orderId;
+      const orderId = data.orderId;
+      //Envoie vers la page de confirmation
+      window.location.href = 'confirmation.html' + '?orderId=' + orderId;
     })
     .catch(function (err) {
       console.log("Erreur fetch" + err);
     });
 })
-
-
-
-
-
-// Envoi d'une requête POST à l'API
-
-/*function postForm() {
-  const orderBtn = document.getElementById("order");
-
-  //Ecouter le bouton submit
-
-  orderBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-
-    if (productLocalStorage !== null) {
-      let orderProducts = [];
-      for (let i = 0; i < productLocalStorage.length; i++) {
-        orderProducts.push(productLocalStorage[i].Id);
-      }
-
-      // Construction de l'objet attendu par l'API
-
-      if (firstName && lastName && address && city && email) {
-        const orderUserProduct = {
-          contact: {
-            firstName: firstName,
-            lastName: lastName,
-            address: address,
-            city: city,
-            email: email,
-          },
-          products: orderProducts,
-        };
-
-        // Requête POST
-
-        const options = {
-          method: "POST",
-          body: JSON.stringify(orderUserProduct),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        };
-        fetch("http://localhost:3000/api/products/order", options)
-          .then((res) => res.json())
-          .then((data) => {
-            // Renvoi de l'orderID dans l'URL
-            //document.location.href = "confirmation.html?id=" + data.orderId;
-          })
-          .catch(function (err) {
-            console.log("Erreur fetch" + err);
-          });
-      } else {
-        alert("Veuillez renseigner le formulaire");
-      }
-    } else {
-      alert("Votre Panier est vide");
-    }
-  });
-}
-postForm();*/
