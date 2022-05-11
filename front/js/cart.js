@@ -7,16 +7,20 @@ let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
 const parser = new DOMParser();
 let productSection = document.getElementById("cart__items");
 for (i = 0; i < productLocalStorage.length; i++) {
-    let productItem = `
+  let produitEnCours = fetch("http://localhost:3000/api/products/")
+      .then((res) => { return res.json();})
+      .then ((res) => console.log(res[i]._id));
+    
+  let productItem = `
     <article class="cart__item" data-id="${productLocalStorage[i].Id}" data-color="${productLocalStorage[i].Color}">
         <div class="cart__item__img">
-            <img src="${productLocalStorage[i].imageUrl}" loading="lazy" alt="${productLocalStorage[i].altTxt}">
+            <img src="${produitEnCours.imageUrl}" loading="lazy" alt="${produitEnCours.altTxt}">
         </div>
         <div class="cart__item__content">
             <div class="cart__item__content__description">
-            <h2>${productLocalStorage[i].Name}</h2>
+            <h2>${produitEnCours.Name}</h2>
             <p>${productLocalStorage[i].Color}</p>
-            <p>${productLocalStorage[i].Price} €</p>
+            <p>${produitEnCours.Price} €</p>
             </div>
             <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
@@ -34,18 +38,8 @@ for (i = 0; i < productLocalStorage.length; i++) {
 }
 totalOrder();
 
+
 //------------------------------Modification quantité input------------------------------//
-
-/*let priceQty = productLocalStorage[i].Price;
-
-for (let i = 0; i < inputQty.length; i++) {
-  inputQty[i].addEventListener("change", function (event) {
-    event.preventDefault();
-    
-    productLocalStorage[i].Price = productLocalStorage[i].Qty * productLocalStorage[i].Price;
-
-  })
-}*/
 
 let inputQty = document.querySelectorAll(".itemQuantity");
 
@@ -69,7 +63,9 @@ for (let i = 0; i < inputQty.length; i++) {
 }
 
 function totalOrder() {
-//------------------------------Calcul de la quantité total------------------------------//
+
+
+  //------------------------------Calcul de la quantité total------------------------------//
 
   //Déclaration de variable pour mettre la quantité des produits
   let totalCalculQty = [];
@@ -86,14 +82,20 @@ function totalOrder() {
   document.getElementById("totalQuantity").innerHTML = totalQuantity;
   console.log(reducerQty)
 
-//------------------------------Calcul du prix total------------------------------//
+
+  //------------------------------Calcul du prix total------------------------------//
 
   //Déclaration de variable pour mettre les prix des produits
   let totalCalculPrice = [];
 
   //Récupération des prix dans le panier
   for (let i = 0; i < productLocalStorage.length; i++){
-    let priceProductCart = productLocalStorage[i].Price * productLocalStorage[i].Qty;
+    let produitEnCours = fetch("http://localhost:3000/api/products/")
+    .then((res) => { return res.json();})
+    .catch(function (err) {
+      console.log("Erreur fetch" + err);
+    });
+    let priceProductCart = produitEnCours.Price * productLocalStorage[i].Qty;
     totalCalculPrice.push(priceProductCart)
   }
 
@@ -104,19 +106,19 @@ function totalOrder() {
   document.querySelector('#totalPrice').innerHTML = totalPrice;
 }
 
+
 //------------------------------Touche supprimer------------------------------//
 
 //Suppression d'items
 
 let deleteProduct = document.querySelectorAll(".deleteItem");
-console.log(deleteProduct)
 
 for (let i = 0; i < deleteProduct.length; i++){
   deleteProduct[i].addEventListener("click" , (event) =>{
     event.preventDefault();
 
-    let deleteIdSelect = productLocalStorage[i].Id;
-    productLocalStorage = productLocalStorage.filter( el => el.Id !== deleteIdSelect);
+    let deleteIdSelect = productLocalStorage[i].ArticleId;
+    productLocalStorage = productLocalStorage.filter( el => el.ArticleId !== deleteIdSelect);
     
     localStorage.setItem("Product",JSON.stringify(productLocalStorage));
 
@@ -124,8 +126,6 @@ for (let i = 0; i < deleteProduct.length; i++){
     window.location.href = "cart.html";
   })
 }
-
-
 
 
 //------------------------------Vérification des champs formulaire------------------------------//
@@ -227,7 +227,9 @@ btnCommand.addEventListener("click", (e) => {
   } 
   
   //Mettre l'objet "contact" dans localStorage
+  let formulaireOk = false;
   if (firstNameControl() && lastNameControl() && addressControl() && cityControl() && emailControl()) {
+    formulaireOk = true;
   localStorage.setItem("Contact", JSON.stringify(contact));
   } else {
     alert("Veuillez remplir le formualire de contact")
@@ -251,14 +253,17 @@ btnCommand.addEventListener("click", (e) => {
     },
   };
   console.log(options)
-  fetch("http://localhost:3000/api/products/order", options)
-    .then((res) => { return res.json();})
-    .then((data) => {
-      const orderId = data.orderId;
-      //Envoie vers la page de confirmation
-      window.location.href = 'confirmation.html' + '?orderId=' + orderId;
-    })
-    .catch(function (err) {
-      console.log("Erreur fetch" + err);
-    });
+
+  if (formulaireOk){
+    fetch("http://localhost:3000/api/products/order", options)
+      .then((res) => { return res.json();})
+      .then((data) => {
+        const orderId = data.orderId;
+        //Envoie vers la page de confirmation
+        window.location.href = 'confirmation.html' + '?orderId=' + orderId;
+      })
+      .catch(function (err) {
+        console.log("Erreur fetch" + err);
+      });
+  }
 })

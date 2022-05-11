@@ -75,23 +75,19 @@ function addToCart() {
       let userProductId = productId;
       let userProductColor = color.value;
       let userProductQty = quantity.value;
-      let userProductPrice = article.price;
-      let userProductImgSrc = article.imageUrl;
-      let userProductImgAlt = article.altTxt;
-      let userProductName = article.name
+      //let userProductPrice = article.price;
+      //let userProductImgSrc = article.imageUrl;
+      //let userProductImgAlt = article.altTxt;
+      //let userProductName = article.name
       let userArticleId = userProductId + userProductColor;
       
 
       // Création d'un objet produit
       let userProductArray = {
         ArticleId: userArticleId,
-        Name: userProductName,
         Id: userProductId,
         Color: userProductColor,
         Qty: userProductQty,
-        Price: userProductPrice,
-        imageUrl: userProductImgSrc,
-        altTxt: userProductImgAlt,
       };
       console.log(userProductArray)
 
@@ -103,26 +99,24 @@ function addToCart() {
       if (productLocalStorage == null) {
         productLocalStorage = [];
         productLocalStorage.push(userProductArray);
-        alert("C'est cool, le produit est enregistré");
       }
 
       // Comportement si il y a un produit dans localStorage
       else {
         
         //On pose la question au LocalStorage
+        ProductAdded = false;
         for (i = productLocalStorage.length - 1; i >= 0; i--) {
           if (productLocalStorage[i].ArticleId == userProductArray.ArticleId) {
             productLocalStorage[i].Qty = parseInt(productLocalStorage[i].Qty) + parseInt(userProductArray.Qty);
             ProductAdded = true;
             break;
-          } 
-          else {
-            ProductAdded = false;
           }
-        }
+        }console.log(ProductAdded)
         if (!ProductAdded) productLocalStorage.push(userProductArray);
       }
       localStorage.setItem("Product",JSON.stringify(productLocalStorage));
       }
+      alert("C'est cool, le produit est enregistré");
   });
 }
