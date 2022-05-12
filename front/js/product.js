@@ -75,19 +75,23 @@ function addToCart() {
       let userProductId = productId;
       let userProductColor = color.value;
       let userProductQty = quantity.value;
-      //let userProductPrice = article.price;
-      //let userProductImgSrc = article.imageUrl;
-      //let userProductImgAlt = article.altTxt;
-      //let userProductName = article.name
+      let userProductPrice = article.price;
+      let userProductImgSrc = article.imageUrl;
+      let userProductImgAlt = article.altTxt;
+      let userProductName = article.name
       let userArticleId = userProductId + userProductColor;
       
 
       // Création d'un objet produit
       let userProductArray = {
         ArticleId: userArticleId,
+        Name: userProductName,
         Id: userProductId,
         Color: userProductColor,
         Qty: userProductQty,
+        Price: userProductPrice,
+        imageUrl: userProductImgSrc,
+        altTxt: userProductImgAlt,
       };
       console.log(userProductArray)
 

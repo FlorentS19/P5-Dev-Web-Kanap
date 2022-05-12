@@ -30,4 +30,3 @@ async function allProducts() {
     
     console.log("allProducts", products)
 }
-

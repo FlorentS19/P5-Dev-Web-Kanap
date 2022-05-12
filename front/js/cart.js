@@ -7,20 +7,16 @@ let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
 const parser = new DOMParser();
 let productSection = document.getElementById("cart__items");
 for (i = 0; i < productLocalStorage.length; i++) {
-  let produitEnCours = fetch("http://localhost:3000/api/products/")
-      .then((res) => { return res.json();})
-      .then ((res) => console.log(res[i]._id));
-    
-  let productItem = `
+    let productItem = `
     <article class="cart__item" data-id="${productLocalStorage[i].Id}" data-color="${productLocalStorage[i].Color}">
         <div class="cart__item__img">
-            <img src="${produitEnCours.imageUrl}" loading="lazy" alt="${produitEnCours.altTxt}">
+            <img src="${productLocalStorage[i].imageUrl}" loading="lazy" alt="${productLocalStorage[i].altTxt}">
         </div>
         <div class="cart__item__content">
             <div class="cart__item__content__description">
-            <h2>${produitEnCours.Name}</h2>
+            <h2>${productLocalStorage[i].Name}</h2>
             <p>${productLocalStorage[i].Color}</p>
-            <p>${produitEnCours.Price} €</p>
+            <p>${productLocalStorage[i].Price} €</p>
             </div>
             <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
@@ -90,12 +86,7 @@ function totalOrder() {
 
   //Récupération des prix dans le panier
   for (let i = 0; i < productLocalStorage.length; i++){
-    let produitEnCours = fetch("http://localhost:3000/api/products/")
-    .then((res) => { return res.json();})
-    .catch(function (err) {
-      console.log("Erreur fetch" + err);
-    });
-    let priceProductCart = produitEnCours.Price * productLocalStorage[i].Qty;
+    let priceProductCart = productLocalStorage[i].Price * productLocalStorage[i].Qty;
     totalCalculPrice.push(priceProductCart)
   }
 
