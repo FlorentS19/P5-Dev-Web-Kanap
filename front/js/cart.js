@@ -1,6 +1,38 @@
 //Récuperation des produits dans le panier
 let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
+console.log(productLocalStorage);
 
+//Récupération des données des canapés hors LS
+const getCanapData = async () => {
+
+  const res = await fetch(`http://localhost:3000/api/products`);
+  canapData = await res.json();
+  console.log(canapData);
+
+  // Si l'id est le même dans canapData et le localStorage alors on applique la fonction pour afficher les éléments :
+  if (productLocalStorage.length === 0) {
+      document.getElementById('cart__items').insertAdjacentHTML('beforeend', `<p>Votre panier est vide.</p>`);
+      document.getElementById('cart__items').style.textAlign = "center";
+      return
+  }
+
+  else {
+      let totalPrice = 0;
+      for (let i = 0; i < productLocalStorage.length; i++) {
+          const canap = productLocalStorage[i];
+          const realCanap = canapData.find(data => data._id === canap.Id);
+          console.log(canap);
+          console.log(realCanap);
+
+          //Calcul du prix total directement à chaque boucle.
+          totalPrice += productLocalStorage[i].Qty * realCanap.price;
+          let totalPriceElement = document.getElementById('totalPrice');
+          totalPriceElement.textContent = totalPrice;
+          console.log(totalPriceElement)
+      }
+  }
+}
+getCanapData()
 
 
 //Intégration HTML + des données produit sur la page
@@ -82,7 +114,7 @@ function totalOrder() {
   //------------------------------Calcul du prix total------------------------------//
 
   //Déclaration de variable pour mettre les prix des produits
-  let totalCalculPrice = [];
+  /*let totalCalculPrice = [];
 
   //Récupération des prix dans le panier
   for (let i = 0; i < productLocalStorage.length; i++){
@@ -94,7 +126,7 @@ function totalOrder() {
   //Aditionner les prix dans la variable
   const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
   const totalPrice = totalCalculPrice.reduce(reducerPrice,0);
-  document.querySelector('#totalPrice').innerHTML = totalPrice;
+  document.querySelector('#totalPrice').innerHTML = totalPrice;*/
 }
 
 
@@ -144,8 +176,11 @@ btnCommand.addEventListener("click", (e) => {
   console.log(products)
 
   //Alertes des erreurs pour les problémes de saisie rencontré
-  const textAlertName = (value) => {
-    return `${value}: Le prénom et/ou le nom, ne doit contenir entre 2 et 20 caractères et ne doit pas contenir de caractères spéciaux`;
+  const textAlertFirstName = (value) => {
+    return `${value}: Le prénom, ne doit contenir entre 2 et 20 caractères et ne doit pas contenir de caractères spéciaux`;
+  }
+  const textAlertLastName = (value) => {
+    return `${value}: Le nom, ne doit contenir entre 2 et 20 caractères et ne doit pas contenir de caractères spéciaux`;
   }
   const textAlertAddress = (value) => {
     return `${value}: L'adresse doit comprendre un numéro, la voie ainsi que le nom de la voie`;
@@ -168,7 +203,8 @@ btnCommand.addEventListener("click", (e) => {
     if (regExNameAndCity(checkFirstName)) {
       return true;
     } else  {
-      alert(textAlertName("Prénom"));
+      firstNameErrorMsg.innerHTML = textAlertFirstName("Erreur");
+      alert(textAlertFirstName("Prénom"));
       return false;
     }
   }
@@ -179,7 +215,8 @@ btnCommand.addEventListener("click", (e) => {
     if (regExNameAndCity(checklastName)) {
       return true;
     } else  {
-      alert(textAlertName("Nom"));
+      lastNameErrorMsg.innerHTML = textAlertLastName("Erreur");
+      alert(textAlertLastName("Nom"));
       return false;
     }
   }
@@ -190,6 +227,7 @@ btnCommand.addEventListener("click", (e) => {
     if (/^[a-zA-Z0-9\s]{5,50}$/.test(checkaddress)) {
       return true;
     } else  {
+      addressErrorMsg.innerHTML = textAlertAddress("Erreur");
       alert(textAlertAddress("Adresse"));
       return false;
     }
@@ -201,6 +239,7 @@ btnCommand.addEventListener("click", (e) => {
     if (regExNameAndCity(checkcity)) {
       return true;
     } else  {
+      cityErrorMsg.innerHTML = textAlertCity("Erreur");
       alert(textAlertCity("Ville"));
       return false;
     }
@@ -212,6 +251,7 @@ btnCommand.addEventListener("click", (e) => {
     if (/^[\w_-]+@[\w-]+\.[a-z]{2,3}$/.test(checkemail)) {
       return true;
     } else  {
+      emailErrorMsg.innerHTML = textAlertEmail("Erreur");
       alert(textAlertEmail("Email"));
       return false;
     }
