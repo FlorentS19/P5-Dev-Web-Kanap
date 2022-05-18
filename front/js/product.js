@@ -75,7 +75,7 @@ function addToCart() {
       let userProductId = productId;
       let userProductColor = color.value;
       let userProductQty = quantity.value;
-      let userProductPrice = article.price;
+      //let userProductPrice = article.price;
       let userProductImgSrc = article.imageUrl;
       let userProductImgAlt = article.altTxt;
       let userProductName = article.name
@@ -89,7 +89,7 @@ function addToCart() {
         Id: userProductId,
         Color: userProductColor,
         Qty: userProductQty,
-        Price: userProductPrice,
+        //Price: userProductPrice,
         imageUrl: userProductImgSrc,
         altTxt: userProductImgAlt,
       };
