@@ -1,13 +1,11 @@
+let canapData = [];
+
 //Récuperation des produits dans le panier
 let productLocalStorage = JSON.parse(localStorage.getItem("Product"));
-console.log(productLocalStorage);
+console.table(productLocalStorage);
 
 //Récupération des données des canapés hors LS
 const getCanapData = async () => {
-
-  const res = await fetch(`http://localhost:3000/api/products`);
-  canapData = await res.json();
-  console.log(canapData);
 
   // Si l'id est le même dans canapData et le localStorage alors on applique la fonction pour afficher les éléments :
   if (productLocalStorage == null) {
@@ -17,25 +15,26 @@ const getCanapData = async () => {
   }
 
   else {
-      for (i = 0; i < productLocalStorage.length; i++) {
-          const canap = productLocalStorage[i];
-          const realCanap = canapData.find(data => data._id === canap.Id);
-          console.log(canap);
-          console.log(realCanap);
-          console.log(productLocalStorage.length);
-
-          displayBasket(canap, realCanap);
-      }
+    const res = await fetch(`http://localhost:3000/api/products`);
+    canapData = await res.json();
+    console.log(canapData);
+    displayBasket(canapData);
   }
 }
 getCanapData()
-
+console.log(canapData);
 
 //Intégration HTML + des données produit sur la page
-const displayBasket = (id, realId) => {
+const displayBasket = (canapData) => {
   const parser = new DOMParser();
   let productSection = document.getElementById("cart__items");
+
+  var PrixTotal = 0;
+  var QtyTotal = 0;
   for (i = 0; i < productLocalStorage.length; i++) {
+    for (i = 0; i < productLocalStorage.length; i++) {
+      const LScanap = productLocalStorage[i];
+      var realCanap = canapData.find(data => data._id === LScanap.Id);
       let productItem = `
       <article class="cart__item" data-id="${productLocalStorage[i].Id}" data-color="${productLocalStorage[i].Color}">
           <div class="cart__item__img">
@@ -45,7 +44,7 @@ const displayBasket = (id, realId) => {
               <div class="cart__item__content__description">
               <h2>${productLocalStorage[i].Name}</h2>
               <p>${productLocalStorage[i].Color}</p>
-              <p>${realId.price} €</p>
+              <p>${realCanap.price} €</p>
               </div>
               <div class="cart__item__content__settings">
                   <div class="cart__item__content__settings__quantity">
@@ -60,8 +59,11 @@ const displayBasket = (id, realId) => {
       </article>`;
       const htmlString = parser.parseFromString(productItem,"text/html");
           productSection.appendChild(htmlString.body.firstChild);
-  }console.log(realId)
-  totalOrder();
+
+      QtyTotal = QtyTotal + 1 * productLocalStorage[i].Qty;
+      PrixTotal = PrixTotal + realCanap.price * productLocalStorage[i].Qty;
+  }
+  totalOrder(PrixTotal, QtyTotal);
 
 
   //------------------------------Modification quantité input------------------------------//
@@ -73,7 +75,8 @@ const displayBasket = (id, realId) => {
       event.preventDefault();
 
       productLocalStorage[i].Qty = event.target.value;
-
+      console.log(productLocalStorage[i].Qty);
+      console.log(event.target.value);
       if (
         productLocalStorage[i].Qty == 0 ||
         productLocalStorage[i].Qty > 100
@@ -82,47 +85,24 @@ const displayBasket = (id, realId) => {
         window.location.reload();
       } else {
         localStorage.setItem("Product", JSON.stringify(productLocalStorage));
-        totalOrder()
+          var PrixTotal = 0;
+          var QtyTotal = 0;
+          for (i = 0; i < productLocalStorage.length; i++) {
+            const LScanap = productLocalStorage[i];
+            var realCanap = canapData.find(data => data._id === LScanap.Id);
+            
+            QtyTotal = QtyTotal + 1 * productLocalStorage[i].Qty;
+            PrixTotal = PrixTotal + realCanap.price * productLocalStorage[i].Qty;
+        }
+        totalOrder(PrixTotal, QtyTotal)
+        window.location.reload();
       }
     });
   }
 
-  function totalOrder() {
+  function totalOrder(totalPrice, QtyTotal) {
 
-
-    //------------------------------Calcul de la quantité total------------------------------//
-
-    //Déclaration de variable pour mettre la quantité des produits
-    let totalCalculQty = [];
-
-    //Récupération des quantités dans le panier
-    for (let i = 0; i < productLocalStorage.length; i++){
-      let quantityProductCart = productLocalStorage[i].Qty;
-      totalCalculQty.push(quantityProductCart)
-    }
-
-    //Aditionner les quantités dans la variable
-    const reducerQty = (accumulator, currentValue) => accumulator + currentValue;
-    const totalQuantity = eval(totalCalculQty.join("+"));
-    document.getElementById("totalQuantity").innerHTML = totalQuantity;
-    console.log(reducerQty)
-
-
-    //------------------------------Calcul du prix total------------------------------//
-
-    //Déclaration de variable pour mettre les prix des produits
-    let totalCalculPrice = [];
-
-    //Récupération des prix dans le panier
-    for (let i = 0; i < productLocalStorage.length; i++){
-      let priceProductCart = realId.price * productLocalStorage[i].Qty;
-      totalCalculPrice.push(priceProductCart)
-    }
-
-
-    //Aditionner les prix dans la variable
-    const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
-    const totalPrice = totalCalculPrice.reduce(reducerPrice,0);
+    document.getElementById("totalQuantity").innerHTML = QtyTotal;
     document.querySelector('#totalPrice').innerHTML = totalPrice;
   }
 
@@ -295,4 +275,4 @@ btnCommand.addEventListener("click", (e) => {
         console.log("Erreur fetch" + err);
       });
   }
-})
+})}

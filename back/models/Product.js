@@ -3,7 +3,7 @@ const products = [
     "colors": ["Blue", "White", "Black"],
     "_id": "107fb5b75607497b96722bda5b504926",
     "name": "Kanap Sinopé",
-    "price": 1849,
+    "price": 1,
     "imageUrl": "kanap01.jpeg",
     "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     "altTxt": "Photo d'un canapé bleu, deux places"
@@ -12,7 +12,7 @@ const products = [
     "colors": ["Black/Yellow", "Black/Red"],
     "_id": "415b7cacb65d43b2b5c1ff70f3393ad1",
     "name": "Kanap Cyllène",
-    "price": 4499,
+    "price": 4,
     "imageUrl": "kanap02.jpeg",
     "description": "Morbi nec erat aliquam, sagittis urna non, laoreet justo. Etiam sit amet interdum diam, at accumsan lectus.",
     "altTxt": "Photo d'un canapé jaune et noir, quattre places"
